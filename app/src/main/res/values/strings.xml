@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">LanMsn</string>
-
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+    <string name ="pick_username">Pick username</string>
+    <string name="btn_enter_text">ENTER</string>
 </resources>
