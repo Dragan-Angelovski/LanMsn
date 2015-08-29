@@ -2,6 +2,7 @@ package mk.ukim.finki.mpip.lanmsn.activities;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -31,6 +32,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction("android.net.wifi.WIFI_STATE_CHANGED");
         mIntentFilter.addAction("android.net.wifi.STATE_CHANGE");
+        mEnter.setOnClickListener(this);
     }
 
     @Override
@@ -83,6 +85,9 @@ public class LoginActivity extends Activity implements View.OnClickListener {
     private void enterMessanger(){
 
 
+        Intent intent = new Intent(this,DevicesListActivity.class);
+        intent.putExtra("username",mUsername.getText().toString());
+        startActivityForResult(intent,1);
 
 
     }

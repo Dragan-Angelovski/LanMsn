@@ -15,12 +15,12 @@ public class NetworkChangeReciever extends BroadcastReceiver {
 
         int networkStatus = NetworkUtil.getConnectivityStatus(context);
 
-        if(networkStatus==NetworkUtil.TYPE_NOT_CONNECTED){
+        /*if(networkStatus==NetworkUtil.TYPE_NOT_CONNECTED){
 
-            Toast.makeText(context,"Network unavailable",Toast.LENGTH_LONG).show();
+            Toast.makeText(context,"Network unavailable",Toast.LENGTH_LONG) .show();
         }else{
             Toast.makeText(context,"Network available",Toast.LENGTH_LONG).show();
-        }
+        }*/
 
 
     }
