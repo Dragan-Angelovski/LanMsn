@@ -87,7 +87,7 @@ public class DevicesListActivity extends AppCompatActivity implements WifiP2pMan
             @Override
             public void onClick(View v) {
 
-                wifiP2pManager.discoverPeers(mChannel, mLisenersFactory.getDiscoverPeersListener());
+                disconnect();
 
             }
         });
@@ -125,6 +125,24 @@ public class DevicesListActivity extends AppCompatActivity implements WifiP2pMan
 
 
 
+    }
+
+    public void disconnect() {
+
+        wifiP2pManager.removeGroup(mChannel, new WifiP2pManager.ActionListener() {
+
+            @Override
+            public void onFailure(int reasonCode) {
+                //Log.d(TAG, "Disconnect failed. Reason :" + reasonCode);
+            }
+
+            @Override
+            public void onSuccess() {
+                //fragment.getView().setVisibility(View.GONE);
+                Toast.makeText(DevicesListActivity.this,"Disconected",Toast.LENGTH_LONG).show();
+            }
+
+        });
     }
 
     public WiFiPeerListAdapter getmListAdapter(){
