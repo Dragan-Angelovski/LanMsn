@@ -28,7 +28,6 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.activity_login);
         mUsername = (EditText) findViewById(R.id.txtUsername);
         mEnter = (Button) findViewById(R.id.btnEnter);
-        mNetworkChangeReceiver = new NetworkChangeReciever();
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction("android.net.wifi.WIFI_STATE_CHANGED");
         mIntentFilter.addAction("android.net.wifi.STATE_CHANGE");
@@ -56,6 +55,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onResume() {
         super.onResume();
+        mNetworkChangeReceiver = new NetworkChangeReciever();
         registerReceiver(mNetworkChangeReceiver, mIntentFilter);
     }
 
@@ -87,7 +87,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 
         Intent intent = new Intent(this,DevicesListActivity.class);
         intent.putExtra("username",mUsername.getText().toString());
-        startActivityForResult(intent,1);
+        startActivity(intent);
 
 
     }

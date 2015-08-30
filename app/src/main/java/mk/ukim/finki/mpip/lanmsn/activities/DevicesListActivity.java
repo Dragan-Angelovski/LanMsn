@@ -16,7 +16,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -26,12 +28,13 @@ import android.widget.Toast;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Handler;
 
 import mk.ukim.finki.mpip.lanmsn.R;
+import mk.ukim.finki.mpip.lanmsn.listeners.ListenersFactory;
 import mk.ukim.finki.mpip.lanmsn.network.WiFiDirectBroadcastReceiver;
 
-public class DevicesListActivity extends AppCompatActivity implements WifiP2pManager.ActionListener,WifiP2pManager.PeerListListener,
-    WifiP2pManager.ConnectionInfoListener{
+public class DevicesListActivity extends AppCompatActivity implements WifiP2pManager.ConnectionInfoListener{
 
     private TextView mMyDeviceName;
     private final IntentFilter intentFilter = new IntentFilter();
@@ -41,16 +44,53 @@ public class DevicesListActivity extends AppCompatActivity implements WifiP2pMan
 
     private BroadcastReceiver mReceiver;
 
+    private Button btnRefresh;
+
     private List<WifiP2pDevice> peers = new ArrayList();
     private ListView peersList;
     private WiFiPeerListAdapter mListAdapter;
+
+    private ListenersFactory mLisenersFactory = new ListenersFactory();
+
+    private WifiP2pManager.PeerListListener mPeerListListener = new WifiP2pManager.PeerListListener() {
+        @Override
+        public void onPeersAvailable(WifiP2pDeviceList peerList) {
+
+            // Out with the old, in with the new.
+            peers.clear();
+            peers.addAll(peerList.getDeviceList());
+
+            // If an AdapterView is backed by this data, notify it
+            // of the change.  For instance, if you have a ListView of available
+            // peers, trigger an update.
+
+            android.os.Handler mHandler = new android.os.Handler();
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+
+                    mListAdapter.notifyDataSetChanged();
+
+                }
+            });
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_devices_list);
         mMyDeviceName = (TextView) findViewById(R.id.txtMyDeviceName);
+        btnRefresh = (Button) findViewById(R.id.refresh);
 
+        btnRefresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                wifiP2pManager.discoverPeers(mChannel, mLisenersFactory.getDiscoverPeersListener());
+
+            }
+        });
         Intent intent = getIntent();
 
         String username = intent.getExtras().getString("username");
@@ -58,6 +98,13 @@ public class DevicesListActivity extends AppCompatActivity implements WifiP2pMan
         peersList = (ListView) findViewById(R.id.peersList);
         mListAdapter = new WiFiPeerListAdapter(this, R.layout.row_devices, peers);
         peersList.setAdapter(mListAdapter);
+        peersList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                connect(position);
+            }
+        });
 
 
         //  Indicates a change in the Wi-Fi P2P status.
@@ -74,7 +121,7 @@ public class DevicesListActivity extends AppCompatActivity implements WifiP2pMan
 
         wifiP2pManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         mChannel = wifiP2pManager.initialize(this, getMainLooper(), null);
-        wifiP2pManager.discoverPeers(mChannel,this);
+        wifiP2pManager.discoverPeers(mChannel,mLisenersFactory.getDiscoverPeersListener());
 
 
 
@@ -89,9 +136,8 @@ public class DevicesListActivity extends AppCompatActivity implements WifiP2pMan
     @Override
     public void onResume() {
         super.onResume();
-        mReceiver = new WiFiDirectBroadcastReceiver(wifiP2pManager, mChannel, this);
+        mReceiver = new WiFiDirectBroadcastReceiver(wifiP2pManager, mChannel, this,mPeerListListener);
         registerReceiver(mReceiver, intentFilter);
-
 
     }
 
@@ -101,41 +147,8 @@ public class DevicesListActivity extends AppCompatActivity implements WifiP2pMan
         unregisterReceiver(mReceiver);
     }
 
-    @Override
-    public void onSuccess() {
-        // Code for when the discovery initiation is successful goes here.
-        // No services have actually been discovered yet, so this method
-        // can often be left blank.  Code for peer discovery goes in the
-        // onReceive method, detailed below.
-        mListAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void onFailure(int reasonCode) {
-        // Code for when the discovery initiation fails goes here.
-        // Alert the user that something went wrong.
-        Toast.makeText(this,"wrond",Toast.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void onPeersAvailable(WifiP2pDeviceList peerList) {
 
 
-        // Out with the old, in with the new.
-        peers.clear();
-        peers.addAll(peerList.getDeviceList());
-
-        // If an AdapterView is backed by this data, notify it
-        // of the change.  For instance, if you have a ListView of available
-        // peers, trigger an update.
-        mListAdapter.notifyDataSetChanged();
-        if (peers.size() == 0) {
-            //Log.d(WiFiDirectActivity.TAG, "No devices found");
-            mListAdapter.notifyDataSetChanged();
-            return;
-        }
-
-    }
 
 
     public void connect(int position) {
@@ -161,6 +174,18 @@ public class DevicesListActivity extends AppCompatActivity implements WifiP2pMan
         });
     }
 
+    public void setIsWifiP2pEnabled(boolean value){
+
+        if(value){
+
+            Toast.makeText(this,"wifip2p enabled",Toast.LENGTH_LONG).show();
+        }else{
+
+            Toast.makeText(this,"wifip2p not enabled",Toast.LENGTH_LONG).show();
+            //Todo show dialog for wifip2p settings
+        }
+    }
+
 
     @Override
     public void onConnectionInfoAvailable(WifiP2pInfo info) {
@@ -174,10 +199,15 @@ public class DevicesListActivity extends AppCompatActivity implements WifiP2pMan
             // Do whatever tasks are specific to the group owner.
             // One common case is creating a server thread and accepting
             // incoming connections.
+            Toast.makeText(DevicesListActivity.this,"This is server",Toast.LENGTH_LONG).show();
+
         } else if (info.groupFormed) {
             // The other device acts as the client. In this case,
             // you'll want to create a client thread that connects to the group
             // owner.
+
+            Toast.makeText(DevicesListActivity.this,"This is client",Toast.LENGTH_LONG).show();
+
         }
     }
 

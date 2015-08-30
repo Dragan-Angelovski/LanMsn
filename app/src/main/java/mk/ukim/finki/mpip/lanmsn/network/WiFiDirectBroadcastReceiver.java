@@ -28,29 +28,31 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
     private WifiP2pManager manager;
     private WifiP2pManager.Channel channel;
     private DevicesListActivity activity;
+    private WifiP2pManager.PeerListListener mPeerListListener;
 
     public WiFiDirectBroadcastReceiver(WifiP2pManager manager, WifiP2pManager.Channel channel,
-                                       DevicesListActivity activity) {
+                                       DevicesListActivity activity,WifiP2pManager.PeerListListener peerListListener) {
         super();
         this.manager = manager;
         this.channel = channel;
         this.activity = activity;
+        mPeerListListener=peerListListener;
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
 
         String action = intent.getAction();
-        Toast.makeText(activity, action, Toast.LENGTH_LONG).show();
+        //Toast.makeText(activity, action, Toast.LENGTH_LONG).show();
 
         if (WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION.equals(action)) {
             // Determine if Wifi P2P mode is enabled or not, alert
             // the Activity.
             int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1);
             if (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED) {
-                //activity.setIsWifiP2pEnabled(true);
+                activity.setIsWifiP2pEnabled(true);
             } else {
-                //activity.setIsWifiP2pEnabled(false);
+                activity.setIsWifiP2pEnabled(false);
             }
         } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
 
@@ -60,7 +62,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
             // asynchronous call and the calling activity is notified with a
             // callback on PeerListListener.onPeersAvailable()
             if (manager != null) {
-                manager.requestPeers(channel, activity);
+                manager.requestPeers(channel, mPeerListListener);
             }
             //Log.d(DevicesListActivity.TAG, "P2P peers changed");
 
