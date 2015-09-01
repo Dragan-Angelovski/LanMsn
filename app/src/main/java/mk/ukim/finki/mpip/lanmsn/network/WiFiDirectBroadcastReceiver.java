@@ -1,75 +1,66 @@
 package mk.ukim.finki.mpip.lanmsn.network;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.net.NetworkInfo;
-import android.net.wifi.p2p.WifiP2pManager;
+/*
+ * Copyright (C) 2011 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-import mk.ukim.finki.mpip.lanmsn.activities.DevicesListActivity;
-
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.NetworkInfo;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pManager;
+import android.net.wifi.p2p.WifiP2pManager.Channel;
+import android.net.wifi.p2p.WifiP2pManager.ConnectionInfoListener;
 import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
 
-import mk.ukim.finki.mpip.lanmsn.activities.DevicesListActivity;
+import mk.ukim.finki.mpip.lanmsn.activities.WiFiServiceDiscoveryActivity;
 
 /**
- * Created by Viktor on 8/29/2015.
+ * A BroadcastReceiver that notifies of important wifi p2p events.
  */
 public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 
     private WifiP2pManager manager;
-    private WifiP2pManager.Channel channel;
-    private DevicesListActivity activity;
-    private WifiP2pManager.PeerListListener mPeerListListener;
+    private Channel channel;
+    private Activity activity;
 
-    public WiFiDirectBroadcastReceiver(WifiP2pManager manager, WifiP2pManager.Channel channel,
-                                       DevicesListActivity activity,WifiP2pManager.PeerListListener peerListListener) {
+    /**
+     * @param manager WifiP2pManager system service
+     * @param channel Wifi p2p channel
+     * @param activity activity associated with the receiver
+     */
+    public WiFiDirectBroadcastReceiver(WifiP2pManager manager, Channel channel,
+                                       Activity activity) {
         super();
         this.manager = manager;
         this.channel = channel;
         this.activity = activity;
-        mPeerListListener=peerListListener;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see android.content.BroadcastReceiver#onReceive(android.content.Context,
+     * android.content.Intent)
+     */
     @Override
     public void onReceive(Context context, Intent intent) {
-
         String action = intent.getAction();
-        //Toast.makeText(activity, action, Toast.LENGTH_LONG).show();
-
-        if (WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION.equals(action)) {
-            // Determine if Wifi P2P mode is enabled or not, alert
-            // the Activity.
-            int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1);
-            if (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED) {
-                activity.setIsWifiP2pEnabled(true);
-            } else {
-                activity.setIsWifiP2pEnabled(false);
-            }
-        } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
-
-            // The peer list has changed!  We should probably do something about
-            // that.
-            // Request available peers from the wifi p2p manager. This is an
-            // asynchronous call and the calling activity is notified with a
-            // callback on PeerListListener.onPeersAvailable()
-            if (manager != null) {
-                manager.requestPeers(channel, mPeerListListener);
-            }
-            //Log.d(DevicesListActivity.TAG, "P2P peers changed");
-
-        } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
-
-            // Connection state changed!  We should probably do something about
-            // that.
+        Log.d(WiFiServiceDiscoveryActivity.TAG, action);
+        if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
 
             if (manager == null) {
                 return;
@@ -80,24 +71,22 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 
             if (networkInfo.isConnected()) {
 
-                // We are connected with the other device, request connection
+                // we are connected with the other device, request connection
                 // info to find group owner IP
-
-                manager.requestConnectionInfo(channel, activity);
+                Log.d(WiFiServiceDiscoveryActivity.TAG,
+                        "Connected to p2p network. Requesting network details");
+                manager.requestConnectionInfo(channel,
+                        (ConnectionInfoListener) activity);
+            } else {
+                // It's a disconnect
             }
+        } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION
+                .equals(action)) {
 
-
-        } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
-            /*DeviceListFragment fragment = (DeviceListFragment) activity.getFragmentManager()
-                    .findFragmentById(R.id.frag_list);
-            fragment.updateThisDevice((WifiP2pDevice) intent.getParcelableExtra(
-                    WifiP2pManager.EXTRA_WIFI_P2P_DEVICE));*/
-
-        }else{
-
+            WifiP2pDevice device = (WifiP2pDevice) intent
+                    .getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_DEVICE);
+            Log.d(WiFiServiceDiscoveryActivity.TAG, "Device status -" + device.status);
 
         }
-
     }
 }
-
