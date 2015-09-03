@@ -120,10 +120,15 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
     @Override
     protected void onRestart() {
         Fragment frag = getFragmentManager().findFragmentByTag("services");
-        if (frag != null) {
-            getFragmentManager().beginTransaction().remove(frag).commit();
-        }
+
         super.onRestart();
+
+        if (frag != null) {
+            getFragmentManager().beginTransaction().remove(frag).replace(R.id.container_root, frag);
+        }
+        if(adapter!= null)
+            adapter.clear();
+        startRegistrationAndDiscovery();
     }
 
     @Override
@@ -142,9 +147,7 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
 
             });
         }
-        if(fragment!=null){
-            fragment.onStop();
-        }
+
         super.onStop();
     }
 
@@ -322,11 +325,24 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
         receiver = new WiFiDirectBroadcastReceiver(manager, channel, this);
         registerReceiver(receiver, intentFilter);
     }
-
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onPause() {
         super.onPause();
         unregisterReceiver(receiver);
+        manager.removeLocalService(channel, service, new ActionListener() {
+            @Override
+            public void onSuccess() {
+
+
+            }
+
+            @Override
+            public void onFailure(int reason) {
+
+
+            }
+        });
     }
 
     @Override
@@ -372,20 +388,6 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
     public void onBackPressed() {
         super.onBackPressed();
 
-        manager.removeLocalService(channel, service, new ActionListener() {
-            @Override
-            public void onSuccess() {
 
-
-
-            }
-
-            @Override
-            public void onFailure(int reason) {
-
-
-
-            }
-        });
     }
 }
