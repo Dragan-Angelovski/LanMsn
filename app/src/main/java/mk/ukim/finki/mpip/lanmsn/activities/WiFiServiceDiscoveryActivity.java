@@ -50,7 +50,7 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
 
     // TXT RECORD properties
     public static final String TXTRECORD_PROP_AVAILABLE = "available";
-    public static final String SERVICE_INSTANCE = "_wifidemotest";
+    public static String SERVICE_INSTANCE = "_lanmsn";
     public static final String SERVICE_REG_TYPE = "_presence._tcp";
     public static final String USERNAME = "username";
 
@@ -111,7 +111,7 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
                 .add(R.id.container_root, servicesList, "services").commit();
 
         myUsername = getIntent().getExtras().getString("username");
-
+        SERVICE_INSTANCE +=" "+myUsername;
 
 
     }
@@ -189,7 +189,7 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
 
                         // A service has been discovered. Is this our app?
 
-                        if (instanceName.equalsIgnoreCase(SERVICE_INSTANCE)) {
+                        if (instanceName.split(" ")[0].equalsIgnoreCase("_lanmsn")) {
 
                             // update the UI and add the item the discovered
                             // device.
@@ -201,8 +201,8 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
 
                                 wiFiP2pService.setDevice(srcDevice);
                                 wiFiP2pService.setInstanceName(instanceName);
+                                wiFiP2pService.setUsername(instanceName.split(" ")[1]);
                                 wiFiP2pService.setServiceRegistrationType(registrationType);
-                                wiFiP2pService.setUsername("username");
                                 adapter.add(wiFiP2pService);
                                 adapter.notifyDataSetChanged();
 
