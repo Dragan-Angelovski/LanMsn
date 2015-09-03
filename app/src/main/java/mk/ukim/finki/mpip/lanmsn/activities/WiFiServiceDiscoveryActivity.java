@@ -105,6 +105,7 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
         manager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         channel = manager.initialize(this, getMainLooper(), null);
         SERVICE_INSTANCE = SERVICE_INSTANCE+" "+myUsername;
+        startRegistrationAndDiscovery();
         servicesList = new WiFiDirectServicesList();
         getFragmentManager().beginTransaction()
                 .add(R.id.container_root, servicesList, "services").commit();
