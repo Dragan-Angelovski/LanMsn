@@ -123,7 +123,6 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
             getFragmentManager().beginTransaction().remove(frag).commit();
         }
         super.onRestart();
-        startRegistrationAndDiscovery();
     }
 
     @Override
@@ -192,27 +191,12 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
 
                         // A service has been discovered. Is this our app?
 
-                        if (instanceName.split(" ")[0].equalsIgnoreCase("_lanmsn")) {
 
-                            // update the UI and add the item the discovered
-                            // device.
-                            fragment = (WiFiDirectServicesList) getFragmentManager()
-                                    .findFragmentByTag("services");
-                            if (fragment != null) {
-                                adapter=((WiFiDevicesAdapter) fragment
-                                        .getListAdapter());
 
-                                wiFiP2pService.setDevice(srcDevice);
-                                wiFiP2pService.setInstanceName(instanceName);
-                                wiFiP2pService.setUsername(instanceName.split(" ")[1]);
-                                wiFiP2pService.setServiceRegistrationType(registrationType);
-                                adapter.add(wiFiP2pService);
-                                adapter.notifyDataSetChanged();
-
-                            }
-                        }
 
                     }
+
+
                 }, new DnsSdTxtRecordListener() {
 
                     /**
@@ -224,8 +208,27 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
                             String fullDomainName, Map<String, String> record,
                             WifiP2pDevice device) {
 
-                        Toast.makeText(WiFiServiceDiscoveryActivity.this,"onDnsSdTxtRecordAvailable",Toast.LENGTH_LONG).show();
+                        Toast.makeText(WiFiServiceDiscoveryActivity.this, "onDnsSdTxtRecordAvailable", Toast.LENGTH_LONG).show();
 
+                        // update the UI and add the item the discovered
+                        // device.
+                        if (fullDomainName.split(" ")[0].equalsIgnoreCase("_lanmsn")) {
+                            fragment = (WiFiDirectServicesList) getFragmentManager()
+                                    .findFragmentByTag("services");
+                            if (fragment != null) {
+                                adapter = ((WiFiDevicesAdapter) fragment
+                                        .getListAdapter());
+
+                                wiFiP2pService.setDevice(device);
+                                wiFiP2pService.setInstanceName(fullDomainName.split(" ")[0]);
+                                wiFiP2pService.setUsername(record.get(USERNAME));
+                                wiFiP2pService.setServiceRegistrationType(SERVICE_REG_TYPE);
+                                adapter.add(wiFiP2pService);
+                                adapter.notifyDataSetChanged();
+
+                            }
+
+                        }
                     }
                 });
 
