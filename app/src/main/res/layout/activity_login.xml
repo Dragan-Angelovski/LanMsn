@@ -7,11 +7,13 @@
         android:id="@+id/txtUsername"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:hint="Pick username"
         android:layout_margin="10dp"
         android:padding="5dp"/>
 
     <Button
+        android:layout_alignParentBottom="true"
         android:id="@+id/btnLogin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

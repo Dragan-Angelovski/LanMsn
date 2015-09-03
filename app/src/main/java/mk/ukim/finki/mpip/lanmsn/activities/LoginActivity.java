@@ -1,5 +1,6 @@
 package mk.ukim.finki.mpip.lanmsn.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,7 +13,7 @@ import android.widget.Toast;
 
 import mk.ukim.finki.mpip.lanmsn.R;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+public class LoginActivity extends Activity implements View.OnClickListener {
 
     private Button btnLogin;
     private EditText txtUsername;
@@ -23,7 +24,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_login);
         btnLogin = (Button) findViewById(R.id.btnLogin);
         txtUsername = (EditText) findViewById(R.id.txtUsername);
-
+        btnLogin.setOnClickListener(this);
     }
 
     @Override

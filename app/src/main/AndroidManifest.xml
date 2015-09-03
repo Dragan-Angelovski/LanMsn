@@ -21,12 +21,12 @@
 
     <application
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:theme="@android:style/Theme.Holo" >
+        android:label="@string/app_name">
         <activity
             android:name=".activities.WiFiServiceDiscoveryActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait"
+            android:theme="@style/Platform.AppCompat.Light">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.DEFAULT"/>
@@ -34,7 +34,8 @@
         </activity>
         <activity
             android:name=".activities.LoginActivity"
-            android:label="@string/title_activity_login" >
+            android:label="@string/app_name"
+            android:theme="@style/Platform.AppCompat.Light">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
