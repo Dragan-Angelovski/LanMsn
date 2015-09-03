@@ -25,6 +25,8 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -219,7 +221,7 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
                             String fullDomainName, Map<String, String> record,
                             WifiP2pDevice device) {
 
-
+                        Toast.makeText(WiFiServiceDiscoveryActivity.this,"onDnsSdTxtRecordAvailable",Toast.LENGTH_LONG).show();
 
                     }
                 });
