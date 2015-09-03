@@ -38,11 +38,11 @@ public class WiFiDevicesAdapter extends ArrayAdapter<WiFiP2pService> {
                     .findViewById(android.R.id.text1);
 
             if (nameText != null) {
-                nameText.setText(service.device.deviceName + " - " + service.instanceName);
+                nameText.setText(service.getUsername());
             }
             TextView statusText = (TextView) v
                     .findViewById(android.R.id.text2);
-            statusText.setText(wiFiDirectServicesList.getDeviceStatus(service.device.status));
+            statusText.setText(wiFiDirectServicesList.getDeviceStatus(service.getDevice().status));
         }
         return v;
     }

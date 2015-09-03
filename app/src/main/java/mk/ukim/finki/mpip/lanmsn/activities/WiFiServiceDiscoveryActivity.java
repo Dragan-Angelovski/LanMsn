@@ -50,6 +50,7 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
     public static final String TXTRECORD_PROP_AVAILABLE = "available";
     public static final String SERVICE_INSTANCE = "_wifidemotest";
     public static final String SERVICE_REG_TYPE = "_presence._tcp";
+    public static final String USERNAME = "username";
 
     public static final int MESSAGE_READ = 0x400 + 1;
     public static final int MY_HANDLE = 0x400 + 2;
@@ -69,6 +70,13 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
     private TextView statusTxtView;
 
     private WifiP2pDnsSdServiceInfo service;
+
+    private String myUsername;
+
+    private WiFiDirectServicesList fragment;
+
+    private WiFiDevicesAdapter adapter;
+    private WiFiP2pService wiFiP2pService= new WiFiP2pService();
 
     public Handler getHandler() {
         return handler;
@@ -99,6 +107,8 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
         servicesList = new WiFiDirectServicesList();
         getFragmentManager().beginTransaction()
                 .add(R.id.container_root, servicesList, "services").commit();
+
+        myUsername = getIntent().getExtras().getString("username");
 
 
 
@@ -140,7 +150,7 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
     private void startRegistrationAndDiscovery() {
         Map<String, String> record = new HashMap<String, String>();
         record.put(TXTRECORD_PROP_AVAILABLE, "visible");
-
+        record.put(USERNAME,myUsername);
          service= WifiP2pDnsSdServiceInfo.newInstance(
                 SERVICE_INSTANCE, SERVICE_REG_TYPE, record);
         manager.addLocalService(channel, service, new ActionListener() {
@@ -181,17 +191,16 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
 
                             // update the UI and add the item the discovered
                             // device.
-                            WiFiDirectServicesList fragment = (WiFiDirectServicesList) getFragmentManager()
+                            fragment = (WiFiDirectServicesList) getFragmentManager()
                                     .findFragmentByTag("services");
                             if (fragment != null) {
-                                WiFiDevicesAdapter adapter = ((WiFiDevicesAdapter) fragment
+                                adapter=((WiFiDevicesAdapter) fragment
                                         .getListAdapter());
-                                WiFiP2pService service = new WiFiP2pService();
-                                service.device = srcDevice;
-                                service.instanceName = instanceName;
-                                service.serviceRegistrationType = registrationType;
-                                adapter.add(service);
-                                adapter.notifyDataSetChanged();
+
+                                wiFiP2pService.setDevice(srcDevice);
+                                wiFiP2pService.setInstanceName(instanceName);
+                                wiFiP2pService.setServiceRegistrationType(registrationType);
+
 
                             }
                         }
@@ -207,9 +216,10 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
                     public void onDnsSdTxtRecordAvailable(
                             String fullDomainName, Map<String, String> record,
                             WifiP2pDevice device) {
-                        Log.d(TAG,
-                                device.deviceName + " is "
-                                        + record.get(TXTRECORD_PROP_AVAILABLE));
+
+                        wiFiP2pService.setUsername(record.get(USERNAME));
+                        adapter.add(wiFiP2pService);
+                        adapter.notifyDataSetChanged();
                     }
                 });
 
@@ -248,7 +258,7 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
     @Override
     public void connectP2p(WiFiP2pService service) {
         WifiP2pConfig config = new WifiP2pConfig();
-        config.deviceAddress = service.device.deviceAddress;
+        config.deviceAddress = service.getDevice().deviceName;
         config.wps.setup = WpsInfo.PBC;
         if (serviceRequest != null)
             manager.removeServiceRequest(channel, serviceRequest,
