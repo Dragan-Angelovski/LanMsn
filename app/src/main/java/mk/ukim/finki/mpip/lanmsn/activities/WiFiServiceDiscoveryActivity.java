@@ -138,30 +138,46 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
     }
 
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+
     @Override
     public void onPause() {
-        super.onPause();
+
         unregisterReceiver(receiver);
-        manager.removeLocalService(channel, service, new ActionListener() {
-            @Override
-            public void onSuccess() {
 
-
-            }
-
-            @Override
-            public void onFailure(int reason) {
-
-
-            }
-        });
+        super.onPause();
     }
 
-
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     protected void onStop() {
+
+        statusTxtView.setText("");
         if (manager != null && channel != null) {
+            manager.removeLocalService(channel, service, new ActionListener() {
+                @Override
+                public void onSuccess() {
+
+
+                }
+
+                @Override
+                public void onFailure(int reason) {
+
+
+                }
+            });
+            manager.removeServiceRequest(channel, serviceRequest, new ActionListener() {
+                @Override
+                public void onSuccess() {
+
+
+                }
+
+                @Override
+                public void onFailure(int reason) {
+
+                }
+            });
             manager.removeGroup(channel, new ActionListener() {
 
                 @Override
@@ -269,6 +285,7 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
         // After attaching listeners, create a service request and initiate
         // discovery.
         serviceRequest = WifiP2pDnsSdServiceRequest.newInstance();
+
         manager.addServiceRequest(channel, serviceRequest,
                 new ActionListener() {
 
