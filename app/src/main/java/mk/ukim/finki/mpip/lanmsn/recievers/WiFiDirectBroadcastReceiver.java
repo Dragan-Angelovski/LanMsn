@@ -26,6 +26,7 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.net.wifi.p2p.WifiP2pManager.ConnectionInfoListener;
 import android.util.Log;
+import android.widget.Toast;
 
 import mk.ukim.finki.mpip.lanmsn.activities.WiFiServiceDiscoveryActivity;
 
@@ -80,6 +81,10 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
             WifiP2pDevice device = (WifiP2pDevice) intent
                     .getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_DEVICE);
             Log.d(WiFiServiceDiscoveryActivity.TAG, "Device status -" + device.status);
+
+        } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)){
+
+            Toast.makeText(activity,"peers changed",Toast.LENGTH_LONG).show();
 
         }
     }
