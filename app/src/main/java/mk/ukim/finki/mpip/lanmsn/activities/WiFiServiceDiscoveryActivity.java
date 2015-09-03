@@ -142,6 +142,9 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
 
             });
         }
+        if(fragment!=null){
+            fragment.onStop();
+        }
         super.onStop();
     }
 

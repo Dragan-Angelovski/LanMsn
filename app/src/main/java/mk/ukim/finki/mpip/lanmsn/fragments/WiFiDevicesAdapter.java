@@ -38,7 +38,7 @@ public class WiFiDevicesAdapter extends ArrayAdapter<WiFiP2pService> {
                     .findViewById(android.R.id.text1);
 
             if (nameText != null) {
-                nameText.setText(service.getUsername());
+                nameText.setText(service.getUsername()+" - "+service.getDevice().deviceName );
             }
             TextView statusText = (TextView) v
                     .findViewById(android.R.id.text2);
