@@ -94,8 +94,8 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
 
         manager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         channel = manager.initialize(this, getMainLooper(), null);
-        startRegistrationAndDiscovery();
 
+        startRegistrationAndDiscovery();
         servicesList = new WiFiDirectServicesList();
         getFragmentManager().beginTransaction()
                 .add(R.id.container_root, servicesList, "services").commit();
@@ -301,7 +301,6 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
         super.onResume();
         receiver = new WiFiDirectBroadcastReceiver(manager, channel, this);
         registerReceiver(receiver, intentFilter);
-        discoverService();
     }
 
     @Override
@@ -356,6 +355,7 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
         manager.removeLocalService(channel, service, new ActionListener() {
             @Override
             public void onSuccess() {
+
 
 
             }
