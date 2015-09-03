@@ -105,7 +105,7 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
         manager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         channel = manager.initialize(this, getMainLooper(), null);
         SERVICE_INSTANCE = SERVICE_INSTANCE+" "+myUsername;
-        startRegistrationAndDiscovery();
+
         servicesList = new WiFiDirectServicesList();
         getFragmentManager().beginTransaction()
                 .add(R.id.container_root, servicesList, "services").commit();
@@ -113,7 +113,7 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
         myUsername = getIntent().getExtras().getString("username");
 
 
-
+        startRegistrationAndDiscovery();
     }
 
 
@@ -192,7 +192,7 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
 
                         // A service has been discovered. Is this our app?
 
-
+                        Toast.makeText(WiFiServiceDiscoveryActivity.this, "ServiceAvailable", Toast.LENGTH_LONG).show();
 
 
                     }
