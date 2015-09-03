@@ -24,6 +24,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.activity_login);
         btnLogin = (Button) findViewById(R.id.btnLogin);
         txtUsername = (EditText) findViewById(R.id.txtUsername);
+        txtUsername.setText("wwww");
         btnLogin.setOnClickListener(this);
     }
 

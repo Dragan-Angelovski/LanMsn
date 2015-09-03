@@ -261,7 +261,7 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
     @Override
     public void connectP2p(WiFiP2pService service) {
         WifiP2pConfig config = new WifiP2pConfig();
-        config.deviceAddress = service.getDevice().deviceName;
+        config.deviceAddress = service.getDevice().deviceAddress;
         config.wps.setup = WpsInfo.PBC;
         if (serviceRequest != null)
             manager.removeServiceRequest(channel, serviceRequest,
