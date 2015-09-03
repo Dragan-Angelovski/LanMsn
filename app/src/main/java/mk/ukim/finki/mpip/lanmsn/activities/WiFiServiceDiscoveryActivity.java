@@ -113,15 +113,14 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
         myUsername = getIntent().getExtras().getString("username");
 
 
-        startRegistrationAndDiscovery();
+       // startRegistrationAndDiscovery();
     }
 
-
     @Override
-    protected void onRestart() {
-        Fragment frag = getFragmentManager().findFragmentByTag("services");
+    protected void onStart() {
+        super.onStart();
 
-        super.onRestart();
+        Fragment frag = getFragmentManager().findFragmentByTag("services");
 
         if (frag != null) {
             getFragmentManager().beginTransaction().remove(frag).replace(R.id.container_root, frag);
@@ -130,6 +129,35 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
             adapter.clear();
         startRegistrationAndDiscovery();
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        receiver = new WiFiDirectBroadcastReceiver(manager, channel, this);
+        registerReceiver(receiver, intentFilter);
+    }
+
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    @Override
+    public void onPause() {
+        super.onPause();
+        unregisterReceiver(receiver);
+        manager.removeLocalService(channel, service, new ActionListener() {
+            @Override
+            public void onSuccess() {
+
+
+            }
+
+            @Override
+            public void onFailure(int reason) {
+
+
+            }
+        });
+    }
+
 
     @Override
     protected void onStop() {
@@ -150,6 +178,8 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
 
         super.onStop();
     }
+
+
 
     /**
      * Registers a local service and then initiates a service discovery
@@ -319,31 +349,8 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
         return true;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        receiver = new WiFiDirectBroadcastReceiver(manager, channel, this);
-        registerReceiver(receiver, intentFilter);
-    }
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    @Override
-    public void onPause() {
-        super.onPause();
-        unregisterReceiver(receiver);
-        manager.removeLocalService(channel, service, new ActionListener() {
-            @Override
-            public void onSuccess() {
 
 
-            }
-
-            @Override
-            public void onFailure(int reason) {
-
-
-            }
-        });
-    }
 
     @Override
     public void onConnectionInfoAvailable(WifiP2pInfo p2pInfo) {
