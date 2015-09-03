@@ -68,6 +68,8 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
 
     private TextView statusTxtView;
 
+    private WifiP2pDnsSdServiceInfo service;
+
     public Handler getHandler() {
         return handler;
     }
@@ -98,7 +100,10 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
         getFragmentManager().beginTransaction()
                 .add(R.id.container_root, servicesList, "services").commit();
 
+
+
     }
+
 
     @Override
     protected void onRestart() {
@@ -136,7 +141,7 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
         Map<String, String> record = new HashMap<String, String>();
         record.put(TXTRECORD_PROP_AVAILABLE, "visible");
 
-        WifiP2pDnsSdServiceInfo service = WifiP2pDnsSdServiceInfo.newInstance(
+         service= WifiP2pDnsSdServiceInfo.newInstance(
                 SERVICE_INSTANCE, SERVICE_REG_TYPE, record);
         manager.addLocalService(channel, service, new ActionListener() {
 
@@ -187,8 +192,7 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
                                 service.serviceRegistrationType = registrationType;
                                 adapter.add(service);
                                 adapter.notifyDataSetChanged();
-                                Log.d(TAG, "onBonjourServiceAvailable "
-                                        + instanceName);
+
                             }
                         }
 
@@ -229,13 +233,13 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
 
             @Override
             public void onSuccess() {
+
                 appendStatus("Service discovery initiated");
             }
 
             @Override
             public void onFailure(int arg0) {
                 appendStatus("Service discovery failed");
-
             }
         });
     }
@@ -297,6 +301,7 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
         super.onResume();
         receiver = new WiFiDirectBroadcastReceiver(manager, channel, this);
         registerReceiver(receiver, intentFilter);
+        discoverService();
     }
 
     @Override
@@ -334,12 +339,33 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
         }
         chatFragment = new WiFiChatFragment();
         getFragmentManager().beginTransaction()
-                .replace(R.id.container_root, chatFragment).commit();
+                .replace(R.id.container_root, chatFragment).addToBackStack(null).commit();
         statusTxtView.setVisibility(View.GONE);
     }
 
     public void appendStatus(String status) {
         String current = statusTxtView.getText().toString();
         statusTxtView.setText(current + "\n" + status);
+    }
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        manager.removeLocalService(channel, service, new ActionListener() {
+            @Override
+            public void onSuccess() {
+
+
+            }
+
+            @Override
+            public void onFailure(int reason) {
+
+
+
+            }
+        });
     }
 }
