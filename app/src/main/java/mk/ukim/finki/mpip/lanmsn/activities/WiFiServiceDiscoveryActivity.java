@@ -37,19 +37,9 @@ import mk.ukim.finki.mpip.lanmsn.handlers.ClientSocketHandler;
 import mk.ukim.finki.mpip.lanmsn.handlers.GroupOwnerSocketHandler;
 import mk.ukim.finki.mpip.lanmsn.model.ChatManager;
 import mk.ukim.finki.mpip.lanmsn.model.WiFiP2pService;
-import mk.ukim.finki.mpip.lanmsn.network.WiFiDirectBroadcastReceiver;
+import mk.ukim.finki.mpip.lanmsn.recievers.WiFiDirectBroadcastReceiver;
 
-/**
- * The main activity for the sample. This activity registers a local service and
- * perform discovery over Wi-Fi p2p network. It also hosts a couple of fragments
- * to manage chat operations. When the app is launched, the device publishes a
- * chat service and also tries to discover services published by other peers. On
- * selecting a peer published service, the app initiates a Wi-Fi P2P (Direct)
- * connection with the peer. On successful connection with a peer advertising
- * the same service, the app opens up sockets to initiate a chat.
- * {@code WiFiChatFragment} is then added to the the main activity which manages
- * the interface and messaging needs for a chat session.
- */
+
 public class WiFiServiceDiscoveryActivity extends Activity implements
         WiFiDirectServicesList.DeviceClickListener, Handler.Callback, WiFiChatFragment.MessageTarget,
         ConnectionInfoListener {

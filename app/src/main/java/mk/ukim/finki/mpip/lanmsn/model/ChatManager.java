@@ -10,10 +10,7 @@ import java.net.Socket;
 
 import mk.ukim.finki.mpip.lanmsn.activities.WiFiServiceDiscoveryActivity;
 
-/**
- * Handles reading and writing of messages with socket buffers. Uses a Handler
- * to post messages to UI thread for UI updates.
- */
+
 public class ChatManager implements Runnable {
 
     private Socket socket = null;

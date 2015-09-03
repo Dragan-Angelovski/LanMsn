@@ -1,4 +1,4 @@
-package mk.ukim.finki.mpip.lanmsn.network;
+package mk.ukim.finki.mpip.lanmsn.recievers;
 
 /*
  * Copyright (C) 2011 The Android Open Source Project
@@ -29,20 +29,14 @@ import android.util.Log;
 
 import mk.ukim.finki.mpip.lanmsn.activities.WiFiServiceDiscoveryActivity;
 
-/**
- * A BroadcastReceiver that notifies of important wifi p2p events.
- */
+
 public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 
     private WifiP2pManager manager;
     private Channel channel;
     private Activity activity;
 
-    /**
-     * @param manager WifiP2pManager system service
-     * @param channel Wifi p2p channel
-     * @param activity activity associated with the receiver
-     */
+
     public WiFiDirectBroadcastReceiver(WifiP2pManager manager, Channel channel,
                                        Activity activity) {
         super();

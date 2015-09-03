@@ -11,10 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 import mk.ukim.finki.mpip.lanmsn.model.ChatManager;
 
-/**
- * The implementation of a ServerSocket handler. This is used by the wifi p2p
- * group owner.
- */
+
 public class GroupOwnerSocketHandler extends Thread {
 
     ServerSocket socket = null;

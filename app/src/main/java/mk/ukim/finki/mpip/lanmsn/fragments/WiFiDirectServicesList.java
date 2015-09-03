@@ -16,13 +16,10 @@ import java.util.List;
 
 import mk.ukim.finki.mpip.lanmsn.model.WiFiP2pService;
 
-/**
- * A simple ListFragment that shows the available services as published by the
- * peers
- */
+
 public class WiFiDirectServicesList extends ListFragment {
 
-    WiFiDevicesAdapter listAdapter = null;
+    private WiFiDevicesAdapter listAdapter = null;
 
     public interface DeviceClickListener {
          void connectP2p(WiFiP2pService wifiP2pService);

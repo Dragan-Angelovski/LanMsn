@@ -17,17 +17,14 @@ import java.util.List;
 import mk.ukim.finki.mpip.lanmsn.R;
 import mk.ukim.finki.mpip.lanmsn.model.ChatManager;
 
-/**
- * This fragment handles chat related UI which includes a list view for messages
- * and a message entry field with send button.
- */
+
 public class WiFiChatFragment extends Fragment {
 
     private View view;
     private ChatManager chatManager;
     private TextView chatLine;
     private ListView listView;
-    public ChatMessageAdapter adapter = null;
+    private ChatMessageAdapter adapter = null;
     private List<String> items = new ArrayList<String>();
 
     @Override
@@ -57,10 +54,11 @@ public class WiFiChatFragment extends Fragment {
     }
 
     public interface MessageTarget {
-        public Handler getHandler();
+        Handler getHandler();
     }
 
     public void setChatManager(ChatManager obj) {
+
         chatManager = obj;
     }
 
@@ -69,43 +67,5 @@ public class WiFiChatFragment extends Fragment {
         adapter.notifyDataSetChanged();
     }
 
-    /**
-     * ArrayAdapter to manage chat messages.
-     */
-    public class ChatMessageAdapter extends ArrayAdapter<String> {
 
-        List<String> messages = null;
-
-        public ChatMessageAdapter(Context context, int textViewResourceId,
-                                  List<String> items) {
-            super(context, textViewResourceId, items);
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View v = convertView;
-            if (v == null) {
-                LayoutInflater vi = (LayoutInflater) getActivity()
-                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                v = vi.inflate(android.R.layout.simple_list_item_1, null);
-            }
-            String message = items.get(position);
-            if (message != null && !message.isEmpty()) {
-                TextView nameText = (TextView) v
-                        .findViewById(android.R.id.text1);
-
-                if (nameText != null) {
-                    nameText.setText(message);
-                    if (message.startsWith("Me: ")) {
-                        nameText.setTextAppearance(getActivity(),
-                                R.style.normalText);
-                    } else {
-                        nameText.setTextAppearance(getActivity(),
-                                R.style.boldText);
-                    }
-                }
-            }
-            return v;
-        }
-    }
 }

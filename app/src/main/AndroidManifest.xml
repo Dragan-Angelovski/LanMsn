@@ -16,7 +16,8 @@
 
     <application
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name" >
+        android:label="@string/app_name"
+        android:theme="@android:style/Theme.Holo">
         <activity
             android:name=".activities.WiFiServiceDiscoveryActivity"
             android:label="@string/app_name"
