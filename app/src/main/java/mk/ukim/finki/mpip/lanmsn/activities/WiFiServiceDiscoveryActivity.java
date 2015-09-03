@@ -200,7 +200,9 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
                                 wiFiP2pService.setDevice(srcDevice);
                                 wiFiP2pService.setInstanceName(instanceName);
                                 wiFiP2pService.setServiceRegistrationType(registrationType);
-
+                                wiFiP2pService.setUsername("username");
+                                adapter.add(wiFiP2pService);
+                                adapter.notifyDataSetChanged();
 
                             }
                         }
@@ -217,9 +219,8 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
                             String fullDomainName, Map<String, String> record,
                             WifiP2pDevice device) {
 
-                        wiFiP2pService.setUsername(record.get(USERNAME));
-                        adapter.add(wiFiP2pService);
-                        adapter.notifyDataSetChanged();
+
+
                     }
                 });
 
