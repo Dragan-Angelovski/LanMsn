@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mk.ukim.finki.mpip.lanmsn.R;
+import mk.ukim.finki.mpip.lanmsn.activities.OnBackFromChat;
 import mk.ukim.finki.mpip.lanmsn.model.ChatManager;
 
 
@@ -26,6 +28,7 @@ public class WiFiChatFragment extends Fragment {
     private ListView listView;
     private ChatMessageAdapter adapter = null;
     private List<String> items = new ArrayList<String>();
+    private OnBackFromChat onBackFromChatListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -50,6 +53,22 @@ public class WiFiChatFragment extends Fragment {
                         }
                     }
                 });
+
+        view.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+                if (keyCode == KeyEvent.KEYCODE_BACK) {
+                    if (onBackFromChatListener != null)
+                        onBackFromChatListener.onBackFromChat();
+                    return true;
+                }
+                return false;
+
+
+            }
+        });
+
         return view;
     }
 
@@ -65,6 +84,14 @@ public class WiFiChatFragment extends Fragment {
     public void pushMessage(String readMessage) {
         adapter.add(readMessage);
         adapter.notifyDataSetChanged();
+    }
+
+    public OnBackFromChat getOnBackFromChatListener() {
+        return onBackFromChatListener;
+    }
+
+    public void setOnBackFromChatListener(OnBackFromChat onBackFromChatListener) {
+        this.onBackFromChatListener = onBackFromChatListener;
     }
 
 

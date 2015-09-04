@@ -44,7 +44,7 @@ import mk.ukim.finki.mpip.lanmsn.recievers.WiFiDirectBroadcastReceiver;
 
 public class WiFiServiceDiscoveryActivity extends Activity implements
         WiFiDirectServicesList.DeviceClickListener, Handler.Callback, WiFiChatFragment.MessageTarget,
-        ConnectionInfoListener {
+        ConnectionInfoListener,OnBackFromChat {
 
     public static final String TAG = "lanMsn";
 
@@ -154,32 +154,9 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
     protected void onStop() {
 
         statusTxtView.setText("");
+        stopRegistrationAndDiscovery();
         if (manager != null && channel != null) {
-            manager.removeLocalService(channel, service, new ActionListener() {
-                @Override
-                public void onSuccess() {
 
-
-                }
-
-                @Override
-                public void onFailure(int reason) {
-
-
-                }
-            });
-            manager.removeServiceRequest(channel, serviceRequest, new ActionListener() {
-                @Override
-                public void onSuccess() {
-
-
-                }
-
-                @Override
-                public void onFailure(int reason) {
-
-                }
-            });
             manager.removeGroup(channel, new ActionListener() {
 
                 @Override
@@ -224,6 +201,43 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
 
         discoverService();
 
+    }
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    private void stopRegistrationAndDiscovery(){
+
+        manager.removeLocalService(channel, service, new ActionListener() {
+            @Override
+            public void onSuccess() {
+
+
+            }
+
+            @Override
+            public void onFailure(int reason) {
+
+
+            }
+        });
+        manager.removeServiceRequest(channel, serviceRequest, new ActionListener() {
+            @Override
+            public void onSuccess() {
+
+
+            }
+
+            @Override
+            public void onFailure(int reason) {
+
+            }
+        });
+
+    }
+
+    private void refresh(){
+
+        stopRegistrationAndDiscovery();
+        startRegistrationAndDiscovery();
     }
 
     @SuppressLint("NewApi")
@@ -399,6 +413,7 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
             handler.start();
         }
         chatFragment = new WiFiChatFragment();
+        chatFragment.setOnBackFromChatListener(this);
         getFragmentManager().beginTransaction()
                 .replace(R.id.container_root, chatFragment).addToBackStack(null).commit();
         statusTxtView.setVisibility(View.GONE);
@@ -413,7 +428,14 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+    }
 
+    @Override
+    public void onBackFromChat() {
+
+        refresh();
 
     }
+
+
 }

@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="mk.ukim.finki.mpip.lanmsn.activities.LoginActivity"
-    android:background="#AEEEEE">
+    android:background="@color/activity_login_background">
 
     <ImageView
         android:layout_width="wrap_content"
@@ -38,6 +38,7 @@
             android:layout_width="0dp"
             android:layout_weight="2"
             android:layout_height="50dp"
+            android:background="@color/login_button_color"
             android:textColor="@android:color/white"
             android:text="LOGIN"
             android:gravity="center"/>
