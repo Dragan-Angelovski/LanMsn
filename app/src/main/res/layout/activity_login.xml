@@ -1,24 +1,51 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="mk.ukim.finki.mpip.lanmsn.activities.LoginActivity">
+    tools:context="mk.ukim.finki.mpip.lanmsn.activities.LoginActivity"
+    android:background="#AEEEEE">
 
-    <EditText
-        android:id="@+id/txtUsername"
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/buttonAndTextHolder"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/wifi_chat_picture"
+        android:layout_centerHorizontal="true"/>
+
+    <LinearLayout
+        android:id="@+id/buttonAndTextHolder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:hint="Pick username"
+        android:layout_centerInParent="true"
         android:layout_margin="10dp"
-        android:padding="5dp"/>
+        android:weightSum="4"
+        android:orientation="horizontal">
 
-    <Button
-        android:layout_alignParentBottom="true"
-        android:id="@+id/btnLogin"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_margin="10dp"
-        android:text="LOGIN"/>
+
+        <EditText
+            android:id="@+id/txtUsername"
+            android:layout_width="0dp"
+            android:layout_weight="3"
+            android:layout_height="50dp"
+            android:hint="Pick username"
+            android:layout_marginRight="10dp"
+            android:imeOptions="actionSend"
+            android:padding="5dp"/>
+
+        <Button
+            android:id="@+id/btnLogin"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="50dp"
+            android:textColor="@android:color/white"
+            android:gravity="center"
+            android:text="LOGIN"/>
+
+
+
+    </LinearLayout>
+
+
 
 </RelativeLayout>
