@@ -46,7 +46,9 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
         WiFiDirectServicesList.DeviceClickListener, Handler.Callback, WiFiChatFragment.MessageTarget,
         ConnectionInfoListener {
 
-    public static final String TAG = "wifidirectdemo";
+    public static final String TAG = "lanMsn";
+
+
 
     // TXT RECORD properties
     public static final String TXTRECORD_PROP_AVAILABLE = "available";

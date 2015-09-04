@@ -2,6 +2,7 @@ package mk.ukim.finki.mpip.lanmsn.activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -15,6 +16,8 @@ import mk.ukim.finki.mpip.lanmsn.R;
 
 public class LoginActivity extends Activity implements View.OnClickListener {
 
+    public static final String PREFS_NAME ="lanMsnPrefsFile";
+
     private Button btnLogin;
     private EditText txtUsername;
 
@@ -24,7 +27,11 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.activity_login);
         btnLogin = (Button) findViewById(R.id.btnLogin);
         txtUsername = (EditText) findViewById(R.id.txtUsername);
-        txtUsername.setText("wwww");
+
+        //Restore preferences
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        String username = settings.getString("username","");
+        txtUsername.setText(username);
         btnLogin.setOnClickListener(this);
     }
 
@@ -58,7 +65,13 @@ public class LoginActivity extends Activity implements View.OnClickListener {
             if(!txtUsername.getText().toString().equals("")) {
 
                 Intent intent = new Intent(LoginActivity.this, WiFiServiceDiscoveryActivity.class);
-                intent.putExtra("username", txtUsername.getText().toString());
+                String username = txtUsername.getText().toString();
+                SharedPreferences settings = getSharedPreferences(PREFS_NAME,0);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putString("username",username);
+
+                editor.commit();
+                intent.putExtra("username", username);
                 startActivity(intent);
             }else{
                 Toast.makeText(LoginActivity.this,"You must pick username",Toast.LENGTH_LONG).show();
