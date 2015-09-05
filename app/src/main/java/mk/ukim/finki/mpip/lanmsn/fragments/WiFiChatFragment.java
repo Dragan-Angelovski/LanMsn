@@ -24,7 +24,6 @@ public class WiFiChatFragment extends Fragment {
     private ListView listView;
     private ChatMessageAdapter adapter = null;
     private List<String> items = new ArrayList<String>();
-    private OnBackFromChat onBackFromChatListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -67,13 +66,7 @@ public class WiFiChatFragment extends Fragment {
         adapter.notifyDataSetChanged();
     }
 
-    public OnBackFromChat getOnBackFromChatListener() {
-        return onBackFromChatListener;
-    }
 
-    public void setOnBackFromChatListener(OnBackFromChat onBackFromChatListener) {
-        this.onBackFromChatListener = onBackFromChatListener;
-    }
 
 
 }

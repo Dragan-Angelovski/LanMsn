@@ -24,6 +24,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -92,12 +93,21 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
         this.handler = handler;
     }
 
+    public Button refreshBtn;
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wi_fi_service_discovery);
         statusTxtView = (TextView) findViewById(R.id.status_text);
+        refreshBtn = (Button) findViewById(R.id.refreshBtn);
+        refreshBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                refresh();
+            }
+        });
 
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
@@ -108,7 +118,7 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
 
         manager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         channel = manager.initialize(this, getMainLooper(), null);
-        SERVICE_INSTANCE = SERVICE_INSTANCE+" "+myUsername;
+        //SERVICE_INSTANCE = SERVICE_INSTANCE+" "+myUsername;
 
         servicesList = new WiFiDirectServicesList();
         getFragmentManager().beginTransaction()
@@ -127,7 +137,7 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
         Fragment frag = getFragmentManager().findFragmentByTag("services");
 
         if (frag != null) {
-            getFragmentManager().beginTransaction().remove(frag).replace(R.id.container_root, frag);
+            getFragmentManager().beginTransaction().replace(R.id.container_root, frag);
         }
         if(adapter!= null)
             adapter.clear();
@@ -207,24 +217,22 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void stopRegistrationAndDiscovery(){
+        adapter.clear();
 
-        manager.removeLocalService(channel, service, new ActionListener() {
+        manager.clearLocalServices(channel, new ActionListener() {
             @Override
             public void onSuccess() {
-
 
             }
 
             @Override
             public void onFailure(int reason) {
 
-
             }
         });
-        manager.removeServiceRequest(channel, serviceRequest, new ActionListener() {
+        manager.clearServiceRequests(channel, new ActionListener() {
             @Override
             public void onSuccess() {
-
 
             }
 
@@ -242,6 +250,9 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
         startRegistrationAndDiscovery();
     }
 
+
+    final HashMap<String, String> buddies = new HashMap<String, String>();
+
     @SuppressLint("NewApi")
     private void discoverService() {
 
@@ -249,7 +260,6 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
          * Register listeners for DNS-SD services. These are callbacks invoked
          * by the system when a service is actually discovered.
          */
-
         manager.setDnsSdResponseListeners(channel,
                 new DnsSdServiceResponseListener() {
 
@@ -260,6 +270,29 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
                         // A service has been discovered. Is this our app?
 
                         Toast.makeText(WiFiServiceDiscoveryActivity.this, "ServiceAvailable", Toast.LENGTH_LONG).show();
+                        // update the UI and add the item the discovered
+                        // device.
+                        if (instanceName.equalsIgnoreCase(SERVICE_INSTANCE)) {
+                            fragment = (WiFiDirectServicesList) getFragmentManager()
+                                    .findFragmentByTag("services");
+                            currentVisibleFragment = fragment;
+                            if (fragment != null) {
+                                adapter = ((WiFiDevicesAdapter) fragment
+                                        .getListAdapter());
+
+                                String username = buddies
+                                        .containsKey(srcDevice.deviceAddress) ? buddies
+                                        .get(srcDevice.deviceAddress) : srcDevice.deviceName;
+
+                                wiFiP2pService.setDevice(srcDevice);
+                                wiFiP2pService.setInstanceName(instanceName);
+                                wiFiP2pService.setUsername(username);
+                                wiFiP2pService.setServiceRegistrationType(registrationType);
+                                adapter.add(wiFiP2pService);
+                                adapter.notifyDataSetChanged();
+                            }
+
+                        }
 
 
                     }
@@ -275,29 +308,8 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
                     public void onDnsSdTxtRecordAvailable(
                             String fullDomainName, Map<String, String> record,
                             WifiP2pDevice device) {
-
                         Toast.makeText(WiFiServiceDiscoveryActivity.this, "onDnsSdTxtRecordAvailable", Toast.LENGTH_LONG).show();
-
-                        // update the UI and add the item the discovered
-                        // device.
-                        if (fullDomainName.split(" ")[0].equalsIgnoreCase("_lanmsn")) {
-                            fragment = (WiFiDirectServicesList) getFragmentManager()
-                                    .findFragmentByTag("services");
-                            currentVisibleFragment=fragment;
-                            if (fragment != null) {
-                                adapter = ((WiFiDevicesAdapter) fragment
-                                        .getListAdapter());
-
-                                wiFiP2pService.setDevice(device);
-                                wiFiP2pService.setInstanceName(fullDomainName.split(" ")[0]);
-                                wiFiP2pService.setUsername(record.get(USERNAME));
-                                wiFiP2pService.setServiceRegistrationType(SERVICE_REG_TYPE);
-                                adapter.add(wiFiP2pService);
-                                adapter.notifyDataSetChanged();
-
-                            }
-
-                        }
+                        buddies.put(device.deviceAddress, record.get(USERNAME));
                     }
                 });
 
@@ -328,7 +340,7 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
 
             @Override
             public void onFailure(int arg0) {
-                appendStatus("Service discovery failed");
+                appendStatus("Service discovery failed "+ arg0);
             }
         });
     }
@@ -364,6 +376,7 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
                 appendStatus("Failed connecting to service");
             }
         });
+
     }
 
     @Override
@@ -439,6 +452,28 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
 
 
     private void onBackFromChat() {
+        manager.removeGroup(channel, new ActionListener() {
+            @Override
+            public void onSuccess() {
+
+            }
+
+            @Override
+            public void onFailure(int reason) {
+
+            }
+        });
+        manager.cancelConnect(channel, new ActionListener() {
+            @Override
+            public void onSuccess() {
+
+            }
+
+            @Override
+            public void onFailure(int reason) {
+
+            }
+        });
         statusTxtView.setText("");
         statusTxtView.setVisibility(View.VISIBLE);
         refresh();
