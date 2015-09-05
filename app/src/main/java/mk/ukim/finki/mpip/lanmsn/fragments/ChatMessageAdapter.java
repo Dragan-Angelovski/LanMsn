@@ -1,10 +1,14 @@
 package mk.ukim.finki.mpip.lanmsn.fragments;
 
+import android.app.ActionBar;
 import android.content.Context;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -30,21 +34,30 @@ public class ChatMessageAdapter extends ArrayAdapter<String> {
         if (v == null) {
             LayoutInflater vi = (LayoutInflater) context.getApplicationContext()
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = vi.inflate(android.R.layout.simple_list_item_1, null);
+            v = vi.inflate(R.layout.message_row, null);
         }
         String message = messages.get(position);
         if (message != null && !message.isEmpty()) {
             TextView nameText = (TextView) v
-                    .findViewById(android.R.id.text1);
+                    .findViewById(R.id.messageTextView);
 
             if (nameText != null) {
-                nameText.setText(message);
-                if (message.startsWith("Me: ")) {
-                    nameText.setTextAppearance(context.getApplicationContext(),
-                            R.style.normalText);
+
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
+                        RelativeLayout.LayoutParams.MATCH_PARENT);
+
+                if (message.startsWith(WiFiChatFragment.myMessage)) {
+                    String msg = message.substring(WiFiChatFragment.myMessage.length());
+                    nameText.setText(msg);
+                    params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+                    nameText.setLayoutParams(params);
+                    nameText.setBackgroundResource(R.drawable.green_rectangle);
+
                 } else {
-                    nameText.setTextAppearance(context.getApplicationContext(),
-                            R.style.boldText);
+                    nameText.setText(message);
+                    params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                    nameText.setLayoutParams(params);
+                    nameText.setBackgroundResource(R.drawable.blue_rectangle);
                 }
             }
         }

@@ -13,10 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mk.ukim.finki.mpip.lanmsn.R;
+import mk.ukim.finki.mpip.lanmsn.activities.WiFiServiceDiscoveryActivity;
 import mk.ukim.finki.mpip.lanmsn.model.ChatManager;
 
 
 public class WiFiChatFragment extends Fragment {
+
+    public static final String myMessage ="MY_MEESAGE: ";
 
     private View view;
     private ChatManager chatManager;
@@ -24,6 +27,7 @@ public class WiFiChatFragment extends Fragment {
     private ListView listView;
     private ChatMessageAdapter adapter = null;
     private List<String> items = new ArrayList<String>();
+    private WiFiServiceDiscoveryActivity activity;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -31,18 +35,21 @@ public class WiFiChatFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_chat, container, false);
         chatLine = (TextView) view.findViewById(R.id.txtChatLine);
         listView = (ListView) view.findViewById(android.R.id.list);
+        listView.setDivider(null);
+        listView.setDividerHeight(0);
         adapter = new ChatMessageAdapter(getActivity(), android.R.id.text1,
                 items);
         listView.setAdapter(adapter);
+        activity = (WiFiServiceDiscoveryActivity) getActivity();
         view.findViewById(R.id.button1).setOnClickListener(
                 new View.OnClickListener() {
 
                     @Override
                     public void onClick(View arg0) {
                         if (chatManager != null) {
-                            chatManager.write(chatLine.getText().toString()
-                                    .getBytes());
-                            pushMessage("Me: " + chatLine.getText().toString());
+                            String messageToSend = activity.getMyUsername()+"~~"+chatLine.getText().toString();
+                            chatManager.write(messageToSend.getBytes());
+                            pushMessage(myMessage+activity.getMyUsername()+": " + chatLine.getText().toString());
                             chatLine.setText("");
                         }
                     }

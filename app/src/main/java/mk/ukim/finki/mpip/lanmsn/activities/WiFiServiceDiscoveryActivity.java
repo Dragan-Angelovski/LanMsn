@@ -93,7 +93,6 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
         this.handler = handler;
     }
 
-    public Button refreshBtn;
 
     /** Called when the activity is first created. */
     @Override
@@ -101,13 +100,7 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wi_fi_service_discovery);
         statusTxtView = (TextView) findViewById(R.id.status_text);
-        refreshBtn = (Button) findViewById(R.id.refreshBtn);
-        refreshBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                refresh();
-            }
-        });
+
 
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
@@ -217,6 +210,7 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void stopRegistrationAndDiscovery(){
+        if(adapter!=null)
         adapter.clear();
 
         manager.clearLocalServices(channel, new ActionListener() {
@@ -386,8 +380,9 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
                 byte[] readBuf = (byte[]) msg.obj;
                 // construct a string from the valid bytes in the buffer
                 String readMessage = new String(readBuf, 0, msg.arg1);
+                String[] messageParts = readMessage.split("~~");
                 Log.d(TAG, readMessage);
-                (chatFragment).pushMessage("Buddy: " + readMessage);
+                (chatFragment).pushMessage(messageParts[0]+": " + messageParts[1]);
                 break;
 
             case MY_HANDLE:
@@ -428,6 +423,7 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
                     p2pInfo.groupOwnerAddress);
             handler.start();
         }
+
         chatFragment = new WiFiChatFragment();
         getFragmentManager().beginTransaction()
                 .replace(R.id.container_root, chatFragment).addToBackStack(null).commit();
@@ -480,5 +476,8 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
 
     }
 
+    public String getMyUsername() {
+        return myUsername;
+    }
 
 }
