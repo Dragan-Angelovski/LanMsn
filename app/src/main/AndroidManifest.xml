@@ -25,7 +25,6 @@
         <activity
             android:name=".activities.WiFiServiceDiscoveryActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"
             android:theme="@style/Platform.AppCompat.Light">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
