@@ -44,7 +44,7 @@ import mk.ukim.finki.mpip.lanmsn.recievers.WiFiDirectBroadcastReceiver;
 
 public class WiFiServiceDiscoveryActivity extends Activity implements
         WiFiDirectServicesList.DeviceClickListener, Handler.Callback, WiFiChatFragment.MessageTarget,
-        ConnectionInfoListener,OnBackFromChat {
+        ConnectionInfoListener {
 
     public static final String TAG = "lanMsn";
 
@@ -82,6 +82,8 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
     private WiFiDevicesAdapter adapter;
     private WiFiP2pService wiFiP2pService= new WiFiP2pService();
 
+    private Fragment currentVisibleFragment;
+
     public Handler getHandler() {
         return handler;
     }
@@ -111,7 +113,7 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
         servicesList = new WiFiDirectServicesList();
         getFragmentManager().beginTransaction()
                 .add(R.id.container_root, servicesList, "services").commit();
-
+        currentVisibleFragment=servicesList;
         myUsername = getIntent().getExtras().getString("username");
 
 
@@ -281,6 +283,7 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
                         if (fullDomainName.split(" ")[0].equalsIgnoreCase("_lanmsn")) {
                             fragment = (WiFiDirectServicesList) getFragmentManager()
                                     .findFragmentByTag("services");
+                            currentVisibleFragment=fragment;
                             if (fragment != null) {
                                 adapter = ((WiFiDevicesAdapter) fragment
                                         .getListAdapter());
@@ -413,10 +416,10 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
             handler.start();
         }
         chatFragment = new WiFiChatFragment();
-        chatFragment.setOnBackFromChatListener(this);
         getFragmentManager().beginTransaction()
                 .replace(R.id.container_root, chatFragment).addToBackStack(null).commit();
         statusTxtView.setVisibility(View.GONE);
+        currentVisibleFragment=chatFragment;
     }
 
     public void appendStatus(String status) {
@@ -428,11 +431,16 @@ public class WiFiServiceDiscoveryActivity extends Activity implements
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        if(currentVisibleFragment instanceof WiFiChatFragment){
+            onBackFromChat();
+        }
+
     }
 
-    @Override
-    public void onBackFromChat() {
 
+    private void onBackFromChat() {
+        statusTxtView.setText("");
+        statusTxtView.setVisibility(View.VISIBLE);
         refresh();
 
     }

@@ -1,14 +1,11 @@
 package mk.ukim.finki.mpip.lanmsn.fragments;
 
 import android.app.Fragment;
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -16,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mk.ukim.finki.mpip.lanmsn.R;
-import mk.ukim.finki.mpip.lanmsn.activities.OnBackFromChat;
 import mk.ukim.finki.mpip.lanmsn.model.ChatManager;
 
 
@@ -49,25 +45,10 @@ public class WiFiChatFragment extends Fragment {
                                     .getBytes());
                             pushMessage("Me: " + chatLine.getText().toString());
                             chatLine.setText("");
-                            chatLine.clearFocus();
                         }
                     }
                 });
 
-        view.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-
-                if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    if (onBackFromChatListener != null)
-                        onBackFromChatListener.onBackFromChat();
-                    return true;
-                }
-                return false;
-
-
-            }
-        });
 
         return view;
     }
