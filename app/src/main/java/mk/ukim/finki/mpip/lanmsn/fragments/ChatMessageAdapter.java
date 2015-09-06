@@ -50,12 +50,18 @@ public class ChatMessageAdapter extends ArrayAdapter<String> {
                     String msg = message.substring(WiFiChatFragment.myMessage.length());
                     nameText.setText(msg);
                     params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+                    params.leftMargin=10;
+                    params.rightMargin=10;
+                    params.topMargin=10;
                     nameText.setLayoutParams(params);
                     nameText.setBackgroundResource(R.drawable.green_rectangle);
 
                 } else {
                     nameText.setText(message);
                     params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                    params.leftMargin=10;
+                    params.rightMargin=10;
+                    params.topMargin=10;
                     nameText.setLayoutParams(params);
                     nameText.setBackgroundResource(R.drawable.blue_rectangle);
                 }
