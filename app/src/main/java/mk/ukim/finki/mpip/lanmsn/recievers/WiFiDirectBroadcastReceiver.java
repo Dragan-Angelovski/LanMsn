@@ -29,6 +29,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import mk.ukim.finki.mpip.lanmsn.activities.WiFiServiceDiscoveryActivity;
+import mk.ukim.finki.mpip.lanmsn.dialogs.WiFiAlertDialog;
 
 
 public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
@@ -36,7 +37,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
     private WifiP2pManager manager;
     private Channel channel;
     private Activity activity;
-
+    private WiFiAlertDialog wiFiAlertDialog;
 
     public WiFiDirectBroadcastReceiver(WifiP2pManager manager, Channel channel,
                                        Activity activity) {
@@ -44,6 +45,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
         this.manager = manager;
         this.channel = channel;
         this.activity = activity;
+        wiFiAlertDialog = new WiFiAlertDialog(activity);
     }
 
     /*
@@ -86,6 +88,23 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 
             Toast.makeText(activity,"peers changed",Toast.LENGTH_LONG).show();
 
+        }else if(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION.equals(action)){
+
+            int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1);
+            if (!(state == WifiP2pManager.WIFI_P2P_STATE_ENABLED)) {
+
+                wiFiAlertDialog.createDialog();
+            }else{
+
+                if(wiFiAlertDialog.getDialog()!=null){
+
+                    if(wiFiAlertDialog.getDialog().isShowing()){
+                        wiFiAlertDialog.getDialog().dismiss();
+                    }
+                }
+
+
+            }
         }
     }
 }
